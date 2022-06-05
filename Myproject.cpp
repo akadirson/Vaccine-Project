@@ -41,20 +41,6 @@ void sisteme_kayýt(struct Hasta* ptr, int* psayac) {
 	hasta.dozNo = 0;
 	hasta.tur = '\0';
 
-	fstream myFile;
-	myFile.open("database.txt", ios::app); //append - ekle 
-	myFile << *(psayac)+1 << "- ";
-	myFile << hasta.ID << " ";
-	myFile << hasta.ad << " ";
-	myFile << hasta.soyad << " ";
-	myFile << hasta.yas << " ";
-	myFile << hasta.sehir << " ";
-	myFile << hasta.sonasýtarih << " ";
-	myFile << hasta.dozNo << " ";
-	myFile << hasta.tur << endl;
-	myFile.close();
-	cout << "Kaydolma Basarili!" << endl;
-
 	*(ptr + *psayac) = hasta;
 	*psayac = *psayac + 1;
 }
@@ -262,6 +248,7 @@ int main() {
 		cin >> choice;
 		if (choice == 1) {
 			sisteme_kayýt(ptr, psayac);
+			cout << "Kaydolma Basarili!" << endl;
 			//Sruct array size arttýrma
 			int size = *psayac + 1;
 			struct Hasta* ptryeni;
@@ -290,6 +277,21 @@ int main() {
 			cout << "Gecersiz secim.";
 		}
 		cout << endl;
+	}
+	fstream myFile; //Dosyaya yazma islemleri
+	myFile.open("database.txt", ios::out);
+	if (myFile.is_open()) {
+		for (int i = 0; i < sayac; i++) {
+			myFile << ptr[i].ID << " ";
+			myFile << ptr[i].ad << " ";
+			myFile << ptr[i].soyad << " ";
+			myFile << ptr[i].yas << " ";
+			myFile << ptr[i].sehir << " ";
+			myFile << ptr[i].sonasýtarih << " ";
+			myFile << ptr[i].dozNo << " ";
+			myFile << ptr[i].tur << endl;
+		}
+		myFile.close();
 	}
 	delete[]ptr;
 	ptr = NULL;
