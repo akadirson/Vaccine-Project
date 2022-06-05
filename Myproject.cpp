@@ -15,7 +15,7 @@ struct Hasta {
 	Hasta() {};
 };
 void sisteme_kayýt(struct Hasta* ptr, int* psayac) {
-	Hasta hasta;
+	struct Hasta hasta;
 	while (1) { //ID->HHRR formda almak için while loop
 		cout << "ID giriniz:(HHRR form H:harf, R:rakam):";
 		cin >> hasta.ID;
@@ -58,22 +58,22 @@ void sisteme_kayýt(struct Hasta* ptr, int* psayac) {
 	*(ptr + *psayac) = hasta;
 	*psayac = *psayac + 1;
 }
-void kayitgoruntule(struct Hasta sistem[], int* psayac) { //kayýt gör
+void kayitgoruntule(struct Hasta* ptr, int* psayac) { //kayýt gör
 	char tempID[5];
 	int flag = 0;
 	while (1) { //Dogru ID girildiðini saptamak icin while loop
 		cout << "Kayit gormek istediginiz hastanin ID'sini giriniz:";
 		cin >> tempID;
 		for (int i = 0; i < *psayac; i++) {
-			if (string(sistem[i].ID) == string(tempID)) {
-				cout << sistem[i].ID << " ";
-				cout << sistem[i].ad << " ";
-				cout << sistem[i].soyad << " ";
-				cout << sistem[i].yas << " ";
-				cout << sistem[i].sehir << " ";
-				cout << sistem[i].sonasýtarih << " ";
-				cout << sistem[i].dozNo << " ";
-				cout << "-" << sistem[i].tur << "-" << endl;
+			if (string(ptr[i].ID) == string(tempID)) {
+				cout << ptr[i].ID << " ";
+				cout << ptr[i].ad << " ";
+				cout << ptr[i].soyad << " ";
+				cout << ptr[i].yas << " ";
+				cout << ptr[i].sehir << " ";
+				cout << ptr[i].sonasýtarih << " ";
+				cout << ptr[i].dozNo << " ";
+				cout << "-" << ptr[i].tur << "-" << endl;
 				flag++;
 				break;
 			}
@@ -96,7 +96,7 @@ void kayitdegistir(struct Hasta* ptr, int* psayac) { //kayýt güncelle
 		for (int i = 0; i < *psayac; i++) {
 			if (string(ptr[i].ID) == string(tempID)) {
 				//buraya  cin ile deðiþikler alýcan
-				cout << "1-Ad" << endl << "2-soyad" << endl << "3-yas" << "4-Sehir" << endl;
+				cout << "1-Ad   " << "2-soyad   " << "3-yas   " << "4-Sehir" << endl;
 				cout << "Guncellemek istediginiz numara girin:";
 				cin >> number;
 				if (number == 1) {
@@ -250,22 +250,31 @@ void asikayit(struct Hasta* ptr, int* psayac) {
 }
 int main() {
 	//SÝSTEMDEN: hasta kayýt -- kayýdýný görüntülemek --- kaydýný güncelemek-- yeni aþý kaydý yaptýrmak 
-
-	struct Hasta sistem[20];  //struct array
-	struct Hasta* ptr = &sistem[0];
 	int sayac = 0; //txt ten veri alýrken ona at her zaman sýfýrlanmasýn 
-	int* psayac = &sayac;
-	int choice = 0;
+	int* psayac = &sayac; //struct dizisinin kac struct tuttuðunu gosterir
+	struct Hasta* ptr = new Hasta[1]; //Her yeni kayýtta size DMA ile arttirilacak
 
+
+	int choice = 0;
 	while (1) {
 		cout << "Hangisini yapmak istersiniz:\n" << "1-Sisteme kayit  " << "2-Kayit goruntule ";
 		cout << "3-Kayit Guncelle  " << "4-Yeni asi kayit  " << "5-Sistemden cikis " << endl;
 		cin >> choice;
 		if (choice == 1) {
 			sisteme_kayýt(ptr, psayac);
+			//Sruct array size arttýrma
+			int size = *psayac + 1;
+			struct Hasta* ptryeni;
+			ptryeni = new Hasta[size]; //size arttirilmis DMA
+			for (int i = 0; i < *psayac; i++) {
+				ptryeni[i] = ptr[i]; //eski struct array yeniye gonder
+			}
+			delete[]ptr; //eski struct array bosalt
+			ptr = ptryeni;
+			ptryeni = NULL;
 		}
 		else if (choice == 2) {
-			kayitgoruntule(sistem, psayac);
+			kayitgoruntule(ptr, psayac);
 		}
 		else if (choice == 3) {
 			kayitdegistir(ptr, psayac);
@@ -280,7 +289,8 @@ int main() {
 		else {
 			cout << "Gecersiz secim.";
 		}
-
+		cout << endl;
 	}
-
+	delete[]ptr;
+	ptr = NULL;
 }
